@@ -24,9 +24,8 @@ import toastMessage from '@/lib/constants/toastMessage';
 import toasting from '@/lib/utils/toasting';
 
 import * as styles from './ProfileForm.css';
-
-const MockBackground = ['기본배경B', '기본배경C', '기본배경D', '기본배경E', '기본배경F', '기본배경G'];
-const MockProfile = ['B', 'C', 'D', 'E'];
+import { useLanguage } from '@/store/useLanguage';
+import { accountLocale } from '@/app/account/locale';
 
 interface ProfileFormProps {
   userNickname: string;
@@ -39,6 +38,7 @@ export default function ProfileForm({
   handleProfilePreviewChange,
   handleBackgroundPreviewChange,
 }: ProfileFormProps) {
+  const { language } = useLanguage();
   const [isNicknameValidated, setIsNicknameValidated] = useState(false);
   const [selectedBackground, setSelectedBackground] = useState('');
   const [selectedProfile, setSelectedProfile] = useState('');
@@ -98,7 +98,7 @@ export default function ProfileForm({
     if (e.target.files) {
       const targetFile = e.target.files[0];
       if (targetFile?.size > MAX_IMAGE_INPUT_SIZE_MB) {
-        toasting({ type: 'error', txt: toastMessage.ko.imageSizeError });
+        toasting({ type: 'error', txt: toastMessage[language].imageSizeError });
       } else {
         newBackgroundImageRegister.onChange(e);
         handleBackgroundPreviewChange(e.target.files[0]);
@@ -112,7 +112,7 @@ export default function ProfileForm({
     if (e.target.files) {
       const targetFile = e.target.files[0];
       if (targetFile?.size > MAX_IMAGE_INPUT_SIZE_MB) {
-        toasting({ type: 'error', txt: toastMessage.ko.imageSizeError });
+        toasting({ type: 'error', txt: toastMessage[language].imageSizeError });
       } else {
         newProfileImageRegister.onChange(e);
         handleProfilePreviewChange(e.target.files[0]);
@@ -149,10 +149,10 @@ export default function ProfileForm({
         {/* 닉네임 */}
         <div>
           <div className={styles.inputContainer}>
-            <label className={styles.label}>닉네임</label>
+            <label className={styles.label}>{accountLocale[language].nickname}</label>
             <input
               className={styles.inputText}
-              placeholder={profilePlaceholder.nickname}
+              placeholder={profilePlaceholder[language].nickname}
               maxLength={10}
               autoComplete="off"
               {...nicknameRegister}
@@ -163,15 +163,15 @@ export default function ProfileForm({
           </div>
           {errors.nickname ? (
             <div className={styles.validationMessage}>
-              <ErrorIcon alt="닉네임 중복 검사 결과 실패" />
+              <ErrorIcon alt={accountLocale[language].nicknameDuplicateFail} />
               <span className={styles.errorText}>{errors?.nickname?.message}</span>
             </div>
           ) : (
             getValues('nickname') !== userNickname &&
             isNicknameValidated && (
               <div className={styles.validationMessage}>
-                <CheckIcon alt="닉네임 중복 검사 결과 성공" />
-                <span className={styles.successText}>사용 가능한 닉네임이에요.</span>
+                <CheckIcon alt={accountLocale[language].nicknameDuplicateSuccess} />
+                <span className={styles.successText}>{accountLocale[language].nicknameDuplicateSuccessMessage}</span>
               </div>
             )
           )}
@@ -179,10 +179,10 @@ export default function ProfileForm({
 
         <div>
           <div className={styles.inputContainer}>
-            <label className={styles.label}>소개</label>
+            <label className={styles.label}>{accountLocale[language].introduce}</label>
             <textarea
               className={styles.textarea}
-              placeholder={profilePlaceholder.description}
+              placeholder={profilePlaceholder[language].description}
               autoComplete="off"
               {...register('description', profileDescriptionRules)}
             />
@@ -190,14 +190,14 @@ export default function ProfileForm({
           </div>
           {errors.description && (
             <div className={styles.validationMessage}>
-              <ErrorIcon alt="소개 에러" />
+              <ErrorIcon alt={accountLocale[language].introduceError} />
               <span className={styles.errorText}>{errors?.description?.message}</span>
             </div>
           )}
         </div>
 
         <div className={styles.inputContainer}>
-          <p className={styles.label}>배경이미지</p>
+          <p className={styles.label}>{accountLocale[language].backgroundImage}</p>
           <div className={styles.backgroundOptionContainer}>
             <label className={styles.backgroundOption} htmlFor="backgroundImage">
               <Camera />
@@ -223,15 +223,10 @@ export default function ProfileForm({
                 }}
               />
             ))}
-            {MockBackground.map((image, index) => (
-              <button key={`defaultBackgroundImage${index}`} type="button" className={styles.backgroundOption}>
-                {image}
-              </button>
-            ))}
           </div>
         </div>
         <div className={styles.inputContainer}>
-          <p className={styles.label}>프로필이미지</p>
+          <p className={styles.label}>{accountLocale[language].profileImageAlt}</p>
           <div className={styles.profileOptionContainer}>
             <label className={styles.profileOption} htmlFor="profileImage">
               <Camera />
@@ -256,11 +251,6 @@ export default function ProfileForm({
                   handleDefaultImageClick('profile', image.imageUrl);
                 }}
               />
-            ))}
-            {MockProfile.map((image, index) => (
-              <button key={`defaultProfileImage${index}`} type="button" className={styles.profileOption}>
-                {image}
-              </button>
             ))}
           </div>
         </div>

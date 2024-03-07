@@ -120,15 +120,6 @@ export const ownerProfileImage = style({
   borderRadius: '50%',
 });
 
-export const noImage = style([
-  ownerProfileImage,
-  {
-    width: '30px',
-    height: '30px',
-    backgroundColor: vars.color.blueGray,
-  },
-]);
-
 export const simpleListWrapper = style({
   height: 'auto',
   padding: '20px 16px',
@@ -160,5 +151,5 @@ export const showMoreButton = style([
 ]);
 
 export const noData = style({
-  marginTop: '50px',
+  margin: '20px 0 70px',
 });

@@ -11,6 +11,8 @@ import { removeCookie } from '@/lib/utils/cookie';
 import { useUser } from '@/store/useUser';
 
 import Modal from '@/components/Modal/Modal';
+import { useLanguage } from '@/store/useLanguage';
+import { accountLocale } from '@/app/account/locale';
 
 interface LogOutModalProps {
   handleSetOff: () => void;
@@ -24,6 +26,7 @@ const oauthType = {
 };
 
 export default function LogoutModal({ handleSetOff }: LogOutModalProps) {
+  const { language } = useLanguage();
   const router = useRouter();
   const { logoutUser } = useUser();
 
@@ -36,21 +39,21 @@ export default function LogoutModal({ handleSetOff }: LogOutModalProps) {
         removeCookie('accessToken'); // TODO removeCookieAll
         removeCookie('refreshToken');
 
-        toasting({ type: 'success', txt: toastMessage.ko.loggedOut });
+        toasting({ type: 'success', txt: toastMessage[language].loggedOut });
         router.push('/');
       }
     } catch (error) {
       if (error instanceof AxiosError) {
-        toasting({ type: 'error', txt: toastMessage.ko.loggedOutError });
+        toasting({ type: 'error', txt: toastMessage[language].loggedOutError });
       }
     }
   };
 
   return (
     <Modal handleModalClose={handleSetOff}>
-      <Modal.Title>로그아웃 하시나요?</Modal.Title>
+      <Modal.Title>{accountLocale[language].logoutMessage}</Modal.Title>
       <Modal.Button onCancel={handleSetOff} onClick={handleLogout}>
-        확인
+        {accountLocale[language].confirm}
       </Modal.Button>
     </Modal>
   );

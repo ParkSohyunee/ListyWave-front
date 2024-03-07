@@ -16,9 +16,18 @@ export const ListRecommendationSkeleton = () => {
 export const TrendingListsSkeleton = () => {
   return (
     <div className={styles.trendingListSkeletonWrapper}>
-      <Skeleton variant="rounded" width={400} height={229} animation="wave" />
-      <Skeleton variant="rounded" width={400} height={229} animation="wave" />
-      <Skeleton variant="rounded" width={400} height={229} animation="wave" />
+      <Skeleton variant="rounded" width={600} height={229} animation="wave" />
+      <Skeleton variant="rounded" width={600} height={229} animation="wave" />
+    </div>
+  );
+};
+
+export const UserListsSkeleton = () => {
+  return (
+    <div className={styles.trendingListSkeletonWrapper}>
+      <Skeleton variant="rounded" width={160} height={229} animation="wave" />
+      <Skeleton variant="rounded" width={160} height={229} animation="wave" />
+      <Skeleton variant="rounded" width={160} height={229} animation="wave" />
     </div>
   );
 };

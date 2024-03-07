@@ -22,8 +22,10 @@ function kakaotalkShare({
   const itemTitle2 = listItem[1]?.title ?? '';
   const itemTitle3 = listItem[2]?.title ?? '';
   let allWriter = '';
+
   if (collaborators) {
-    allWriter = [userNickname, ...collaborators].join(',');
+    const collaboratorsNickname = collaborators.map((collaborator) => collaborator.nickname);
+    allWriter = [userNickname, ...collaboratorsNickname].join(',');
   } else {
     allWriter = userNickname;
   }
@@ -33,7 +35,6 @@ function kakaotalkShare({
     templateArgs: {
       title: title,
       description: description,
-      userNickname: userNickname,
       listId: listId,
       itemTitle1,
       itemTitle2,

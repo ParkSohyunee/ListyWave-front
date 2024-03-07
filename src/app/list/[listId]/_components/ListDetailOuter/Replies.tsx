@@ -9,11 +9,14 @@ import { QUERY_KEYS } from '@/lib/constants/queryKeys';
 import timeDiff from '@/lib/utils/time-diff';
 import { ReplyType } from '@/lib/types/commentType';
 import { UserType } from '@/lib/types/userProfileType';
+import { replyLocale } from '@/app/list/[listId]/locale';
 
 import * as styles from './Replies.css';
 import { vars } from '@/styles/theme.css';
 import Line from '/public/icons/horizontal_line.svg';
 import EditPen from '/public/icons/edit_pen.svg';
+import { useLanguage } from '@/store/useLanguage';
+import fallbackProfile from '/public/images/fallback_profileImage.webp';
 
 interface RepliesProps {
   replies?: ReplyType[] | null;
@@ -24,6 +27,7 @@ interface RepliesProps {
 }
 
 function Replies({ replies, listId, currentUserInfo, commentId, handleEdit }: RepliesProps) {
+  const { language } = useLanguage();
   const { commentIds, addCommentId } = useCommentIdStore();
 
   const handleShowReplies = (commentId: number) => () => {
@@ -36,8 +40,8 @@ function Replies({ replies, listId, currentUserInfo, commentId, handleEdit }: Re
     <>
       {replies?.length !== 0 && !isOpenedReplies && (
         <div className={styles.showMoreRepliesWrapper} onClick={handleShowReplies(commentId as number)}>
-          <Line alt="답글 구분선" />
-          <div className={styles.showMoreReplies}>{`답글 ${replies?.length}개 더 보기`}</div>
+          <Line alt={replyLocale[language].lineAlt} />
+          <div className={styles.showMoreReplies}>{`${replies?.length} ${replyLocale[language].moreReply}`}</div>
         </div>
       )}
       {isOpenedReplies && (
@@ -72,6 +76,7 @@ interface ReplyProps {
 }
 
 function Reply({ reply, listId, currentUserInfo, handleEdit, commentId }: ReplyProps) {
+  const { language } = useLanguage();
   const queryClient = useQueryClient();
   const { setCommentId } = useCommentId();
   const { setReplyId } = useReplyId();
@@ -94,16 +99,29 @@ function Reply({ reply, listId, currentUserInfo, handleEdit, commentId }: ReplyP
   return (
     <>
       <div className={styles.replyWrapper}>
-        <Image
-          src={reply.userProfileImageUrl}
-          className={styles.profileImage}
-          width={20}
-          height={20}
-          alt="사용자 프로필 이미지"
-          style={{
-            objectFit: 'cover',
-          }}
-        />
+        {reply.userProfileImageUrl ? (
+          <Image
+            src={reply.userProfileImageUrl}
+            className={styles.profileImage}
+            width={20}
+            height={20}
+            alt={replyLocale[language].profileImageAlt}
+            style={{
+              objectFit: 'cover',
+            }}
+          />
+        ) : (
+          <Image
+            src={fallbackProfile}
+            className={styles.profileImage}
+            width={20}
+            height={20}
+            alt={replyLocale[language].profileImageAlt}
+            style={{
+              objectFit: 'cover',
+            }}
+          />
+        )}
         <div className={styles.replyContainer}>
           <div className={styles.replyInformationWrapper}>
             <span className={styles.replyWriter}>{reply.userNickname}</span>

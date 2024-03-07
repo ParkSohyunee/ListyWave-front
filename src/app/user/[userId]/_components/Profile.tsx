@@ -21,12 +21,16 @@ import { UserType } from '@/lib/types/userProfileType';
 import numberFormatter from '@/lib/utils/numberFormatter';
 
 import Modal from '@/components/Modal/Modal';
+import { userLocale } from '@/app/user/locale';
+import { useLanguage } from '@/store/useLanguage';
 
 export default function Profile({ userId }: { userId: number }) {
+  const { language } = useLanguage();
   const [hasError, setHasError] = useState(false);
   const { onClickMoveToPage } = useMoveToPage();
 
-  const fallbackProfileImageSrc = 'https://image.utoimage.com/preview/cp872722/2022/12/202212008462_500.jpg';
+  const fallbackProfileImageSrc = '/images/fallback_profileImage.webp';
+  const fallbackBackgroundImageSrc = '/images/fallback_backgroundImage.webp';
 
   const { data, isFetching, error, isError } = useQuery<UserType>({
     queryKey: [QUERY_KEYS.userOne, userId],
@@ -41,7 +45,7 @@ export default function Profile({ userId }: { userId: number }) {
         <Modal.Title>{error.response?.data.detail}</Modal.Title>
         <div className={modalStyles.buttonContainer}>
           <button type="button" className={modalStyles.button.primary} onClick={onClickMoveToPage('/')}>
-            확인
+            {userLocale[language].confirm}
           </button>
         </div>
       </Modal>
@@ -49,13 +53,7 @@ export default function Profile({ userId }: { userId: number }) {
   }
 
   const handleImageError = () => {
-    /** 
-     TODO
-    - [ ] onError일때 적용할 이미지 보여주기(프로필, 배경)
-     * 이미지가 있으나 에러일 경우 기본 이미지 중 하나를 보여주는 코드 작성 예정
-     * 아직 서버에 저장된 기본이미지가 없기 때문에 지금은 다른 url 넣어두고, 추후 수정 예정
-     */
-
+    // TODO onError일때 적용할 이미지 공통 로직 만들기
     setHasError(true);
   };
 
@@ -63,12 +61,16 @@ export default function Profile({ userId }: { userId: number }) {
     <div
       className={styles.container}
       style={assignInlineVars({
-        [styles.imageUrl]: `url(${data?.backgroundImageUrl})`,
+        [styles.imageUrl]: `url(${data ? data?.backgroundImageUrl : fallbackBackgroundImageSrc})`,
       })}
     >
       <div className={styles.header}>
         {data?.isOwner && (
-          <SettingIcon alt="마이페이지로 이동하기" className={styles.icon} onClick={onClickMoveToPage('/account')} />
+          <SettingIcon
+            alt={userLocale[language].goToMypage}
+            className={styles.icon}
+            onClick={onClickMoveToPage('/account')}
+          />
         )}
       </div>
       <div className={styles.profileContainer}>
@@ -82,7 +84,7 @@ export default function Profile({ userId }: { userId: number }) {
                   <Image
                     className={styles.profileImage}
                     src={`${hasError ? fallbackProfileImageSrc : data?.profileImageUrl}`}
-                    alt="프로필 이미지"
+                    alt={userLocale[language].profileImageAlt}
                     width={50}
                     height={50}
                     priority
@@ -103,13 +105,13 @@ export default function Profile({ userId }: { userId: number }) {
                     <span className={styles.count}>
                       {data?.followingCount !== undefined && numberFormatter(data.followingCount, 'ko')}
                     </span>
-                    <span className={styles.captionText}>팔로잉</span>
+                    <span className={styles.captionText}>{userLocale[language].following}</span>
                   </div>
                   <div className={styles.text} onClick={onClickMoveToPage(`/user/${userId}/followers`)}>
                     <span className={styles.count}>
                       {data?.followerCount !== undefined && numberFormatter(data.followerCount, 'ko')}
                     </span>
-                    <span className={styles.captionText}>팔로워</span>
+                    <span className={styles.captionText}>{userLocale[language].follow}</span>
                   </div>
                 </div>
               </div>

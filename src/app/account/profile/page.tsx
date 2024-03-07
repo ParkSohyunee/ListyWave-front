@@ -20,8 +20,11 @@ import ProfileForm from './_components/ProfileForm';
 import * as styles from './page.css';
 import ImagePreview from './_components/ImagePreview';
 import ProfileSkeleton from './_components/ProfileSkeleton';
+import { useLanguage } from '@/store/useLanguage';
+import { accountLocale } from '@/app/account/locale';
 
 export default function ProfilePage() {
+  const { language } = useLanguage();
   const router = useRouter();
   //미리보기
   const [profilePreviewUrl, setProfilePreviewUrl] = useState('');
@@ -79,33 +82,40 @@ export default function ProfilePage() {
   const { mutate: updateProfileMutate, isPending } = useMutation({
     mutationFn: updateProfile,
     onSuccess: () => {
-      toasting({ type: 'success', txt: toastMessage.ko.updateProfileSuccess });
+      toasting({ type: 'success', txt: toastMessage[language].updateProfileSuccess });
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.userOne, user.id],
       });
     },
     onError: () => {
-      toasting({ type: 'error', txt: toastMessage.ko.updateProfileError });
+      toasting({ type: 'error', txt: toastMessage[language].updateProfileError });
     },
   });
 
   const handleFormSubmit = () => {
     updateProfileMutate({ userId: user.id as number, data: methods.getValues() });
   };
-
   return (
     <>
       <FormProvider {...methods}>
         <form className={styles.page} onSubmit={methods.handleSubmit(handleFormSubmit)}>
           <Header
-            title="프로필 설정"
+            title={accountLocale[language].profileSetting}
             left="back"
             leftClick={() => {
               router.back();
             }}
             right={
-              <BlueButton type="submit" disabled={!methods.formState.isDirty || isPending}>
-                저장
+              <BlueButton
+                type="submit"
+                disabled={
+                  !methods.formState.isDirty ||
+                  !!methods.formState.errors.nickname ||
+                  !!methods.formState.errors.description ||
+                  isPending
+                }
+              >
+                {accountLocale[language].save}
               </BlueButton>
             }
           />

@@ -17,6 +17,8 @@ import * as styles from './UsersRecommendation.css';
 import useBooleanOutput from '@/hooks/useBooleanOutput';
 import Modal from '@/components/Modal/Modal';
 import LoginModal from '@/components/login/LoginModal';
+import { useLanguage } from '@/store/useLanguage';
+import { commonLocale } from '@/components/locale';
 
 interface FollowButtonProps {
   isFollowing: boolean;
@@ -26,6 +28,7 @@ interface FollowButtonProps {
 }
 
 function FollowButton({ isFollowing, onClick, userId, targetId }: FollowButtonProps) {
+  const { language } = useLanguage();
   const queryClient = useQueryClient();
   const { user: userMe } = useUser();
   const { isOn, handleSetOff, handleSetOn } = useBooleanOutput();
@@ -73,7 +76,7 @@ function FollowButton({ isFollowing, onClick, userId, targetId }: FollowButtonPr
       onClick();
     } else {
       if (userMeData && userMeData?.followingCount >= MAX_FOLLOWING) {
-        toasting({ type: 'warning', txt: toastMessage.ko.limitFollow });
+        toasting({ type: 'warning', txt: toastMessage[language].limitFollow });
         return;
       }
       followUser.mutate();
@@ -91,7 +94,7 @@ function FollowButton({ isFollowing, onClick, userId, targetId }: FollowButtonPr
         className={`${styles.followButtonDefault} ${isFollowing === true ? styles.followButtonFollowing : ''}`}
         onClick={handleFollowUser(isFollowing)}
       >
-        <span>{isFollowing ? '팔로잉' : '팔로우'}</span>
+        <span>{isFollowing ? commonLocale[language].following : commonLocale[language].follow}</span>
       </button>
       {isOn && (
         <Modal handleModalClose={handleSetOff} size="large">

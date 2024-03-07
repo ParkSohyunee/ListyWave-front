@@ -15,6 +15,9 @@ import * as styles from './TrendingLists.css';
 import { vars } from '@/styles/theme.css';
 import { TrendingListsSkeleton } from './Skeleton';
 import oceanEmoji from '/public/images/ocean.png';
+import fallbackProfile from '/public/images/fallback_profileImage.webp';
+import { commonLocale } from '@/components/locale';
+import { useLanguage } from '@/store/useLanguage';
 
 /**@todo 트렌딩 리스트 바뀐 디자인에 맞게 새로 갈아엎을 예정 */
 
@@ -39,12 +42,14 @@ const swiperSliderStyle = [
 const STYLE_INDEX = (num: number) => num % 4;
 
 function TrendingList() {
+  const { language } = useLanguage();
   const { data: trendingLists, isFetching } = useQuery({
     queryKey: [QUERY_KEYS.getTrendingLists],
     queryFn: () => getTrendingLists(),
   });
 
   const swiperStyle = {
+    width: '100vw',
     height: '100%',
     padding: '10px 0',
   };
@@ -57,7 +62,7 @@ function TrendingList() {
     <div className={styles.wrapper}>
       <div className={styles.titleWrapper}>
         <h2 className={styles.sectionTitle}>TRENDING</h2>
-        <Image src={oceanEmoji} alt="바다의 파도 이모지" width="22" />
+        <Image src={oceanEmoji} alt={commonLocale[language].oceanEmofi} width="22" />
       </div>
       <div className={styles.listWrapper}>
         <div className={styles.slide}>
@@ -68,10 +73,9 @@ function TrendingList() {
               centeredSlides={true}
               spaceBetween={10}
               autoplay={{
-                delay: 3000,
+                delay: 1500,
                 disableOnInteraction: false,
               }}
-              // slidesPerView={4}
               loop={true}
               modules={[Autoplay, EffectCoverflow]}
               className="mySwiper"
@@ -163,6 +167,7 @@ interface TrendingListInformationType {
 }
 
 function TrendingListInformation({ item }: TrendingListInformationType) {
+  const { language } = useLanguage();
   return (
     <div className={styles.itemInformationWrapper}>
       <div
@@ -177,13 +182,21 @@ function TrendingListInformation({ item }: TrendingListInformationType) {
           {item?.ownerProfileImageUrl ? (
             <Image
               src={item?.ownerProfileImageUrl}
-              alt="사용자 이미지"
+              alt={commonLocale[language].userProfileImage}
               fill
               style={{ objectFit: 'cover' }}
               className={styles.profileImage}
+              sizes="100vw 100vh"
             />
           ) : (
-            <></>
+            <Image
+              src={fallbackProfile}
+              alt={commonLocale[language].userProfileImage}
+              fill
+              style={{ objectFit: 'cover' }}
+              className={styles.profileImage}
+              sizes="100vw 100vh"
+            />
           )}
         </div>
         <span

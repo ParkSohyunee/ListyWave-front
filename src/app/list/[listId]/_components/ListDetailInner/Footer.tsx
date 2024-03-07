@@ -14,6 +14,8 @@ import getBottomSheetOptionList from '@/app/list/[listId]/_components/ListDetail
 import ShareIcon from '/public/icons/share.svg';
 import EtcIcon from '/public/icons/etc.svg';
 import EyeIcon from '/public/icons/eye.svg';
+import Script from 'next/script';
+import { useLanguage } from '@/store/useLanguage';
 
 interface BottomSheetOptionsProps {
   key: string;
@@ -33,15 +35,30 @@ interface FooterProps {
   isCollected: boolean;
   viewCount: number;
   collectCount: number;
+  isPublic: boolean;
+}
+
+declare global {
+  interface Window {
+    Kakao: any;
+  }
 }
 
 function Footer({ data }: { data: FooterProps }) {
+  const { language } = useLanguage();
   const router = useRouter();
   const path = usePathname();
   const { user: loginUser } = useUser();
   const [isSheetActive, setSheetActive] = useState<boolean>(false);
   const [sheetOptionList, setSheetOptionList] = useState<BottomSheetOptionsProps[]>([]);
-  const listUrl = `https://listywave.vercel.app${path}`;
+  const listUrl = `https://listywave.com${path}`;
+
+  function kakaoInit() {
+    if (!window.Kakao.isInitialized()) {
+      window.Kakao.init(process.env.NEXT_PUBLIC_KAKAO_API_KEY);
+    }
+    // console.log('kakaoShareStatus:', window.Kakao.isInitialized());
+  }
 
   const goToCreateList = () => {
     router.push(`/list/create?title=${data.title}&category=${data.category}`);
@@ -52,7 +69,7 @@ function Footer({ data }: { data: FooterProps }) {
   };
 
   const handleSheetActive = ({ type }: { type: 'share' | 'etc' }) => {
-    const optionList = getBottomSheetOptionList({ type, data, closeBottomSheet, listUrl, goToCreateList });
+    const optionList = getBottomSheetOptionList({ type, data, closeBottomSheet, listUrl, goToCreateList, language });
     setSheetOptionList(optionList);
     setSheetActive((prev: boolean) => !prev);
   };
@@ -78,6 +95,13 @@ function Footer({ data }: { data: FooterProps }) {
 
   return (
     <>
+      <Script
+        src="https://t1.kakaocdn.net/kakao_js_sdk/2.6.0/kakao.min.js"
+        integrity="sha384-6MFdIr0zOira1CHQkedUqJVql0YtcZA1P0nbPrQYJXVJZUkTk/oX4U9GhUIs3/z8"
+        crossOrigin="anonymous"
+        onLoad={kakaoInit}
+        strategy="lazyOnload"
+      />
       {isSheetActive && (
         <ModalPortal>
           <BottomSheet onClose={handleOutsideClick} isActive={isSheetActive} optionList={sheetOptionList} />

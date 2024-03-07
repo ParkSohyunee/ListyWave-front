@@ -2,11 +2,13 @@ import { useState } from 'react';
 import * as styles from './LanguageDropdown.css';
 import useBooleanOutput from '@/hooks/useBooleanOutput';
 import useOnClickOutside from '@/hooks/useOnClickOutside';
+import { useLanguage } from '@/store/useLanguage';
+import { accountLocale } from '@/app/account/locale';
 
 export default function LanguageDropdown() {
   const { isOn, toggle, handleSetOff } = useBooleanOutput();
   const { ref } = useOnClickOutside(handleSetOff);
-  const [language, setLanguage] = useState<'ko' | 'en'>('ko');
+  const { language, setLanguage } = useLanguage();
 
   const handleSelectLanguage = (language: 'ko' | 'en') => {
     setLanguage(language);
@@ -16,7 +18,7 @@ export default function LanguageDropdown() {
   return (
     <div ref={ref} className={styles.container}>
       <div className={styles.triggerDiv} onClick={toggle}>
-        {language === 'ko' ? '한국어' : 'English'}
+        {language === 'ko' ? accountLocale[language].korean : accountLocale[language].english}
       </div>
       {isOn && (
         <div className={styles.menuDiv}>
@@ -26,7 +28,7 @@ export default function LanguageDropdown() {
               handleSelectLanguage('ko');
             }}
           >
-            한국어
+            {accountLocale[language].korean}
           </div>
           <div
             className={`${styles.listDiv} ${language === 'en' && styles.selected}`}
@@ -34,7 +36,7 @@ export default function LanguageDropdown() {
               handleSelectLanguage('en');
             }}
           >
-            English
+            {accountLocale[language].english}
           </div>
         </div>
       )}

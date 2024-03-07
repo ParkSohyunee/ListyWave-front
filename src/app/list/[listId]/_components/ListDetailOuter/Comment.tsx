@@ -12,11 +12,13 @@ import { QUERY_KEYS } from '@/lib/constants/queryKeys';
 import { CommentType } from '@/lib/types/commentType';
 import { UserType } from '@/lib/types/userProfileType';
 import { useCommentId } from '@/store/useComment';
+import { commentLocale } from '@/app/list/[listId]/locale';
 
 import * as styles from './Comment.css';
 import { vars } from '@/styles/theme.css';
-import DefaultProfile from '/public/icons/default_profile_temporary.svg';
+import fallbackProfile from '/public/images/fallback_profileImage.webp';
 import EditPen from '/public/icons/edit_pen.svg';
+import { useLanguage } from '@/store/useLanguage';
 
 /**
  * @todo 타입 정리 필요
@@ -39,8 +41,10 @@ function Comment({
   listId,
   commentId,
   currentUserInfo,
+
   handleEdit,
 }: CommentProps) {
+  const { language } = useLanguage();
   const queryClient = useQueryClient();
   const { setCommentId } = useCommentId();
 
@@ -80,28 +84,58 @@ function Comment({
           {comment && !comment.isDeleted && (
             <Link href={`/user/${comment?.userId}/mylist`}>
               <div className={styles.profileImageParent}>
-                <Image
-                  alt="프로필 이미지"
-                  src={comment.userProfileImageUrl}
-                  className={styles.profileImage}
-                  fill
-                  style={{
-                    objectFit: 'cover',
-                  }}
-                />
+                {comment.userProfileImageUrl ? (
+                  <Image
+                    alt={commentLocale[language].profileImageAlt}
+                    src={comment.userProfileImageUrl}
+                    className={styles.profileImage}
+                    fill
+                    style={{
+                      objectFit: 'cover',
+                    }}
+                    sizes="100vw 100vh"
+                  />
+                ) : (
+                  <Image
+                    alt={commentLocale[language].profileImageAlt}
+                    src={fallbackProfile}
+                    className={styles.profileImage}
+                    fill
+                    style={{
+                      objectFit: 'cover',
+                    }}
+                    sizes="100vw 100vh"
+                  />
+                )}
               </div>
             </Link>
           )}
-          {comment?.isDeleted && <DefaultProfile width={30} height={30} />}
+          {comment?.isDeleted && (
+            <div className={styles.profileImageParent}>
+              <Image
+                alt={commentLocale[language].profileImageAlt}
+                src={fallbackProfile}
+                className={styles.profileImage}
+                fill
+                style={{
+                  objectFit: 'cover',
+                }}
+              />
+            </div>
+          )}
           <div className={styles.commentContainer}>
             <div className={styles.commentInformationWrapper}>
-              <span className={styles.commentWriter}>{comment?.isDeleted ? '알 수 없음' : comment?.userNickname}</span>
+              <Link href={`/user/${comment?.userId}/mylist`}>
+                <span className={styles.commentWriter}>
+                  {comment?.isDeleted ? commentLocale[language].unknown : comment?.userNickname}
+                </span>
+              </Link>
               <span className={styles.commentCreatedTime}>{comment && timeDiff(comment?.updatedDate)}</span>
             </div>
             {!comment?.isDeleted ? (
               <p className={styles.commentContent}>{comment?.content}</p>
             ) : (
-              <span className={styles.deletedComment}>작성자의 요청으로 삭제된 댓글이에요.</span>
+              <span className={styles.deletedComment}>{commentLocale[language].deletedMessage}</span>
             )}
           </div>
         </div>
@@ -115,7 +149,7 @@ function Comment({
         )}
       </div>
       <button className={styles.createReplyButton} onClick={handleActiveNicknameAndIdUpdate}>
-        <span>답글 달기</span>
+        <span>{commentLocale[language].reply}</span>
       </button>
       <Replies
         replies={comment?.replies}

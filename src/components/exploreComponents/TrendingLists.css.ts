@@ -42,8 +42,6 @@ export const listWrapper = style({
   display: 'flex',
   alignItems: 'center',
 
-  // overflowX: 'scroll',
-
   '::-webkit-scrollbar': {
     display: 'none',
   },
@@ -138,7 +136,7 @@ export const itemTitle = style([
     display: '-webkit-box',
     WebkitLineClamp: 3,
     WebkitBoxOrient: 'vertical',
-    wordBreak: 'break-word',
+    wordBreak: 'keep-all',
   },
 ]);
 

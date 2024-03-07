@@ -17,6 +17,8 @@ import toastMessage, { MAX_FOLLOWING } from '@/lib/constants/toastMessage';
 import useBooleanOutput from '@/hooks/useBooleanOutput';
 import Modal from '@/components/Modal/Modal';
 import LoginModal from '@/components/login/LoginModal';
+import { useLanguage } from '@/store/useLanguage';
+import { userLocale } from '@/app/user/locale';
 
 interface FollowButtonProps {
   userId: number;
@@ -24,6 +26,8 @@ interface FollowButtonProps {
 }
 
 export default function FollowButton({ isFollowed, userId }: FollowButtonProps) {
+  const { language } = useLanguage();
+
   const queryClient = useQueryClient();
   const { user: userMe } = useUser();
   const { isOn, handleSetOff, handleSetOn } = useBooleanOutput();
@@ -69,7 +73,7 @@ export default function FollowButton({ isFollowed, userId }: FollowButtonProps) 
       deleteFollowingUser.mutate();
     } else {
       if (userMeData && userMeData?.followingCount >= MAX_FOLLOWING) {
-        toasting({ type: 'warning', txt: toastMessage.ko.limitFollow });
+        toasting({ type: 'warning', txt: toastMessage[language].limitFollow });
         return;
       }
       followUser.mutate();
@@ -82,7 +86,7 @@ export default function FollowButton({ isFollowed, userId }: FollowButtonProps) 
         className={`${isFollowed ? styles.variant.gray : styles.variant.primary}`}
         onClick={handleFollowUser(isFollowed)}
       >
-        {isFollowed ? '팔로우 취소' : '팔로우'}
+        {isFollowed ? userLocale[language].cancelFollow : userLocale[language].follow}
       </button>
       {isOn && (
         <Modal handleModalClose={handleSetOff} size="large">

@@ -1,9 +1,10 @@
 import { style } from '@vanilla-extract/css';
 import { vars } from '@/styles/theme.css';
-import { titleMedium, bodyLarge } from '@/styles/font.css';
+import { titleMedium, bodyRegular } from '@/styles/font.css';
 
 export const simpleItemWrapper = style({
   width: '100%',
+  height: 'auto',
   display: 'flex',
   justifyContent: 'space-between',
   gap: '40px',
@@ -11,6 +12,8 @@ export const simpleItemWrapper = style({
 });
 
 export const rankAndTitle = style({
+  minHeight: '50px',
+
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
@@ -25,6 +28,7 @@ export const rankWrapper = style({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
+  flexShrink: 0,
 });
 
 export const rankText = style([
@@ -36,9 +40,11 @@ export const rankText = style([
 ]);
 
 export const titleText = style([
-  bodyLarge,
+  bodyRegular,
   {
     color: vars.color.black,
+    wordBreak: 'break-all',
+    wordWrap: 'break-word',
   },
 ]);
 
@@ -49,6 +55,7 @@ export const simpleImageWrapper = style({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
+  flexShrink: 0,
 
   textAlign: 'center',
 });

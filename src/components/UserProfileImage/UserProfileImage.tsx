@@ -1,35 +1,32 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
+import { commonLocale } from '@/components/locale';
+import { useLanguage } from '@/store/useLanguage';
 
-import DefaultProfile from '/public/icons/default_profile.svg';
-import axiosInstance from '@/lib/axios/axiosInstance';
 import * as styles from './UserProfileImage.css';
-import axios from 'axios';
+import { assignInlineVars } from '@vanilla-extract/dynamic';
 
 function UserProfileImage({ src, size }: { src: string; size: number }) {
-  const [isValidImage, setIsValidImage] = useState(false);
+  const { language } = useLanguage();
+  const [isValidImage, setIsValidImage] = useState(true);
 
-  useEffect(() => {
-    const handleFetchImage = async () => {
-      if (!src) {
-        setIsValidImage(false);
-        return;
-      }
-      try {
-        await axios.get(src);
-      } catch (error) {
-        setIsValidImage(false);
-        return;
-      }
-      setIsValidImage(true);
-    };
-    handleFetchImage();
-  }, []);
-
-  return isValidImage ? (
-    <Image className={styles.profileImage} src={src} width={size} height={size} alt="이미지 프로필" />
-  ) : (
-    <DefaultProfile width={size} height={size} />
+  return (
+    <div
+      className={styles.profileImage}
+      style={assignInlineVars({
+        [styles.size]: `${size}px`,
+      })}
+    >
+      <Image
+        src={isValidImage ? src : '/icons/default_profile.svg'}
+        fill
+        style={{ objectFit: 'cover' }}
+        alt={commonLocale[language].userProfileImage}
+        onError={() => {
+          setIsValidImage(false);
+        }}
+      />
+    </div>
   );
 }
 
