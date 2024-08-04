@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { assignInlineVars } from '@vanilla-extract/dynamic';
 
 import * as styles from './Card.css';
@@ -26,12 +27,17 @@ export default function Card({ list, isOwner }: CardProps) {
         [styles.listColor]: `${BACKGROUND_COLOR_READ[list.backgroundColor as keyof typeof BACKGROUND_COLOR_READ]}`,
       })}
     >
-      {isVisibleLockIcon && (
-        <div className={styles.lockIcon}>
-          <span className={styles.lockText}>비공개</span>
-          <LockIcon alt="비공개 리스트 표시" />
-        </div>
-      )}
+      <div className={`${isVisibleLockIcon ? styles.listInfoPrivate : styles.listInfo}`}>
+        {isVisibleLockIcon && (
+          <div className={styles.lockIcon}>
+            <span className={styles.lockText}>비공개</span>
+            <LockIcon alt="비공개 리스트 표시" />
+          </div>
+        )}
+        <button className={styles.optionButton}>
+          <Image src="/icons/more_option_button.svg" alt="더보기 버튼" width={2} height={10} />
+        </button>
+      </div>
       <h2 className={styles.title}>{list.title}</h2>
       <ul className={styles.list}>
         {list.listItems.map((item) => (

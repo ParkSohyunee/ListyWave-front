@@ -65,6 +65,19 @@ export const list = style({
   letterSpacing: '-0.36px',
 });
 
+export const listInfo = style({
+  display: 'flex',
+  justifyContent: 'end',
+  alignItems: 'center',
+});
+
+export const listInfoPrivate = style([
+  listInfo,
+  {
+    justifyContent: 'space-between',
+  },
+]);
+
 export const lockIcon = style({
   display: 'flex',
   justifyContent: 'flex-end',
@@ -77,6 +90,11 @@ export const lockText = style({
   fontWeight: '400',
   letterSpacing: '-0.33px',
   color: vars.color.gray7,
+});
+
+export const optionButton = style({
+  width: '3rem',
+  textAlign: 'end',
 });
 
 export const item = style({
